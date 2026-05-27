@@ -9,6 +9,8 @@
 #   ./deploy-contract.sh --build-only     # Build only (no on-chain deploy)
 #   ./deploy-contract.sh --upgrade        # Upgrade existing contract
 #   ./deploy-contract.sh --initialize     # Initialize the contract after deploy
+#   node ./migrate-contract-storage.mjs --input state.json --dry-run
+#   node ./migrate-contract-storage.mjs --input state.json --output migrated.json --write
 #   ./deploy-contract.sh --testnet        # Target testnet (default)
 #   ./deploy-contract.sh --mainnet        # Target mainnet
 # =============================================================================

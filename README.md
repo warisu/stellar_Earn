@@ -386,6 +386,7 @@ FIGMA[link](https://www.figma.com/design/wKinSiQpRv6TDfD3u5lCL7/OneQuestEarn-ste
 - [Next.js Documentation](https://nextjs.org/docs)
 - [NestJS Documentation](https://docs.nestjs.com/)
 - [Rust & Cargo](https://www.rust-lang.org/)
+- [Script Inventory](docs/script-inventory.md)
 
 ## License
 

@@ -81,12 +81,20 @@ audit_rust_dependencies() {
         print_warning "cargo audit found issues"
     fi
     
-    # Run cargo deny
-    print_status "Running cargo deny check..."
+    # Run cargo deny advisories
+    print_status "Running cargo deny advisory check..."
     if cargo deny check advisories; then
-        print_success "cargo deny check completed successfully"
+        print_success "cargo deny advisory check completed successfully"
     else
-        print_warning "cargo deny check found issues"
+        print_warning "cargo deny advisory check found issues"
+    fi
+
+    # Run cargo deny licenses
+    print_status "Running cargo deny license check..."
+    if cargo deny check licenses; then
+        print_success "cargo deny license check completed successfully"
+    else
+        print_warning "cargo deny license check found issues"
     fi
     
     # Check for outdated dependencies
@@ -169,9 +177,14 @@ This report contains the results of comprehensive dependency security audits for
 $(cd contracts/earn-quest && cargo audit 2>&1 || echo "Audit completed with issues")
 \`\`\`
 
-### Cargo Deny Results
+### Cargo Deny Advisory Results
 \`\`\`
 $(cd contracts/earn-quest && cargo deny check advisories 2>&1 || echo "Deny check completed with issues")
+\`\`\`
+
+### Cargo Deny License Results
+\`\`\`
+$(cd contracts/earn-quest && cargo deny check licenses 2>&1 || echo "License check completed with issues")
 \`\`\`
 
 ### Outdated Dependencies
@@ -197,7 +210,7 @@ $(cd BackEnd && npm audit --json 2>&1 || echo "Backend audit completed" 2>/dev/n
 2. **Medium Vulnerabilities**: Address in next sprint
 3. **Low Vulnerabilities**: Address in future maintenance
 4. **Outdated Dependencies**: Update when convenient
-5. **License Compliance**: Review any new license requirements
+5. **License Compliance**: Review any new dependency license requirements
 
 ## Next Steps
 

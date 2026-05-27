@@ -14,7 +14,7 @@ The dependency audit system provides automated security vulnerability scanning a
 - **Bloat Reduction**: `depcheck` integration to identify and remove unused dependencies
 - **Comprehensive Reporting**: Detailed audit reports and artifact uploads
 - **Local Development Tools**: Easy-to-use scripts for manual audits
-- **License Compliance**: Automated license checking for Rust dependencies
+- **License Compliance**: Automated license checking for the contract dependency tree
 
 ## CI/CD Implementation
 
@@ -33,7 +33,7 @@ The dependency audit system provides automated security vulnerability scanning a
 - **Matrix Testing**: Rust stable and beta versions
 - **Security Tools**: 
   - `cargo audit` - Security vulnerability scanning
-  - `cargo deny` - License and advisory checking
+  - `cargo deny` - Advisory and contract dependency tree license checking
   - `cargo outdated` - Dependency version monitoring
 - **Failure Conditions**: Build fails on high/critical vulnerabilities
 - **Artifacts**: Detailed audit reports uploaded
@@ -54,6 +54,7 @@ The dependency audit system provides automated security vulnerability scanning a
 - **Allowed**: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, CC0-1.0, MPL-2.0
 - **Denied**: GPL-2.0, GPL-3.0, AGPL-1.0, AGPL-3.0
 - **Copyleft**: Warn level (review required)
+- **Scope**: Enforced against the `contracts/earn-quest` dependency tree in CI and local audit tooling
 
 **Security Thresholds:**
 - **Vulnerabilities**: Deny (fail build)
@@ -92,8 +93,14 @@ cd contracts/earn-quest
 # Security audit
 cargo audit
 
-# License and advisory check
+# Advisory check
 cargo deny check advisories
+
+# Contract dependency tree license check
+cargo deny check licenses
+
+# Combined policy check
+cargo deny check advisories licenses
 
 # Check for outdated dependencies
 cargo outdated
@@ -156,7 +163,8 @@ Each audit run generates:
 Running the audit script generates:
 - `dependency-audit-report.md`: Comprehensive audit summary with:
   - Rust cargo audit results
-  - Cargo deny license checks
+  - Cargo deny advisory checks
+  - Cargo deny contract dependency tree license checks
   - Outdated dependency analysis
   - Frontend/Backend npm audit results
   - Recommendations and next steps

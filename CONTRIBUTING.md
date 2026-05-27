@@ -19,6 +19,7 @@ Thank you for contributing to **stellar_Earn**! This guide covers the standards 
 7. [Smart Contract (Rust / Soroban)](#7-smart-contract-rust--soroban)
 8. [Reviewer Checklist](#8-reviewer-checklist)
 9. [Labels](#9-labels)
+10. [Script Inventory](#10-script-inventory)
 
 ---
 
@@ -115,6 +116,15 @@ Closes #42
 ### PR Size Guidelines
 
 Keep PRs focused. If a PR touches more than ~400 lines (excluding migrations and generated files), consider splitting it. Large PRs take much longer to review and are more likely to introduce bugs.
+
+## 10. Script Inventory
+
+Repository-maintained scripts are tracked in [docs/script-inventory.md](/Users/macbook/stellar/stellar_Earn/docs/script-inventory.md:1). When you add or change a script, update that inventory with:
+
+- its purpose
+- the owning team or function
+- its lifecycle state
+- any notable maintenance or verification notes
 
 ---
 

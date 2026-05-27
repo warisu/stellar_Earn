@@ -59,6 +59,11 @@ jobs:
         cd contracts/earn-quest
         cargo install cargo-deny
         cargo deny check advisories
+
+    - name: Run cargo-deny (licenses)
+      run: |
+        cd contracts/earn-quest
+        cargo deny check licenses
       
     - name: Check for outdated dependencies
       run: |
@@ -76,6 +81,16 @@ jobs:
         echo "### Cargo Audit Results:" >> audit-report.md
         echo "\`\`\`" >> audit-report.md
         cargo audit >> audit-report.md 2>&1 || echo "Audit completed with warnings" >> audit-report.md
+        echo "\`\`\`" >> audit-report.md
+        echo "" >> audit-report.md
+        echo "### Cargo Deny Advisory Results:" >> audit-report.md
+        echo "\`\`\`" >> audit-report.md
+        cargo deny check advisories >> audit-report.md 2>&1 || echo "Advisory deny check completed with warnings" >> audit-report.md
+        echo "\`\`\`" >> audit-report.md
+        echo "" >> audit-report.md
+        echo "### Cargo Deny License Results:" >> audit-report.md
+        echo "\`\`\`" >> audit-report.md
+        cargo deny check licenses >> audit-report.md 2>&1 || echo "License deny check completed with warnings" >> audit-report.md
         echo "\`\`\`" >> audit-report.md
         echo "" >> audit-report.md
         echo "### Outdated Dependencies:" >> audit-report.md

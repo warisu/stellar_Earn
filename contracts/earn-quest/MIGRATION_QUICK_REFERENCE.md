@@ -6,6 +6,17 @@
 # All migration tests
 cargo test test_migration
 
+# Storage schema dry-run preview
+node ../../scripts/deploy/migrate-contract-storage.mjs \
+  --input state_backup_v1.json \
+  --dry-run
+
+# Write migrated snapshot
+node ../../scripts/deploy/migrate-contract-storage.mjs \
+  --input state_backup_v1.json \
+  --output state_backup_v2.json \
+  --write
+
 # Specific categories
 cargo test test_contract_initialization    # Initialization
 cargo test test_admin_can_authorize        # Authorization
@@ -115,9 +126,10 @@ cargo test test_full_migration_workflow
 1. All testnet tests passing
 2. Security audit complete
 3. Backup current state
-4. Deploy to mainnet
-5. Verify critical functions
-6. Monitor continuously
+4. Preview migration with --dry-run
+5. Deploy to mainnet
+6. Verify critical functions
+7. Monitor continuously
 ```
 
 ## Common Patterns

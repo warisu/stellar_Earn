@@ -4,6 +4,8 @@
 
 This guide provides step-by-step instructions for migrating and upgrading the EarnQuest smart contract across different versions and network environments.
 
+For operational targets around contract success rates and latency windows, see [SLA_SLO.md](./SLA_SLO.md).
+
 ---
 
 ## 🔄 Migration Paths
@@ -214,6 +216,29 @@ soroban contract invoke \
 
 ### Scenario: Major Version Upgrade with State Changes
 
+For storage layout changes, use the snapshot migration utility to preview changes before writing any migrated artifact:
+
+```bash
+# Preview migration actions only
+node scripts/deploy/migrate-contract-storage.mjs \
+  --input state_backup_v1.json \
+  --dry-run
+
+# Write migrated snapshot for review or import tooling
+node scripts/deploy/migrate-contract-storage.mjs \
+  --input state_backup_v1.json \
+  --output state_backup_v2.json \
+  --write
+```
+
+The current migration utility supports the schema changes already reflected in the contract storage model:
+- splitting legacy `metadata` into `metadata_core` and `metadata_extended`
+- splitting legacy `escrow` data into `escrow_balances` and `escrow_meta`
+- normalizing legacy `platform_stats` into `platform_counters`
+- bumping `version`/`schema_version` to the current schema version
+
+`--dry-run` is the safe default for production preparation because it reports the exact action plan without mutating any files.
+
 #### Pre-Migration
 ```bash
 # 1. Export current state
@@ -225,34 +250,45 @@ soroban contract invoke \
 
 # 2. Verify export
 cat state_backup_v1.json | jq .
+
+# 3. Preview schema migration
+node scripts/deploy/migrate-contract-storage.mjs \
+  --input state_backup_v1.json \
+  --dry-run
 ```
 
 #### Migration
 ```bash
-# 1. Deploy new contract
+# 1. Produce migrated snapshot
+node scripts/deploy/migrate-contract-storage.mjs \
+  --input state_backup_v1.json \
+  --output state_backup_v2.json \
+  --write
+
+# 2. Deploy new contract
 soroban contract deploy \
   --wasm target/wasm32-unknown-unknown/release/earn_quest_v2.wasm \
   --source admin-key \
   --network public
 
-# 2. Initialize with migrated data
+# 3. Initialize with migrated data
 soroban contract invoke \
   --id <NEW_CONTRACT_ID> \
   --source admin-key \
   --network public \
-  -- migrate_state --from-json state_backup_v1.json
+  -- migrate_state --from-json state_backup_v2.json
 ```
 
 #### Post-Migration Validation
 ```bash
-# 3. Verify state integrity
+# 4. Verify state integrity
 soroban contract invoke \
   --id <NEW_CONTRACT_ID> \
   --source admin-key \
   --network public \
   -- verify_state_migration
 
-# 4. Audit log
+# 5. Audit log
 soroban contract invoke \
   --id <NEW_CONTRACT_ID> \
   --source admin-key \

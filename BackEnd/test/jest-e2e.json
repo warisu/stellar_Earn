@@ -15,11 +15,9 @@
   "verbose": true,
   "globals": {
     "ts-jest": {
-      "tsconfig": {
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true
-      }
+      "tsconfig": "./tsconfig.test.json"
     }
   },
+
   "setupFilesAfterEnv": ["<rootDir>/setup-e2e-afterenv.ts"]
 }
