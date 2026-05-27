@@ -3,24 +3,12 @@
 import { memo } from 'react';
 import type { Quest } from '@/lib/types/quest';
 import { QuestDifficulty } from '@/lib/types/quest';
+import { formatDeadlineLabel } from '@/lib/utils/date';
 
 interface QuestCardProps {
   quest: Quest;
   onClick?: (quest: Quest) => void;
   progress?: number;
-}
-
-function formatTimeRemaining(deadline?: string): string | null {
-  if (!deadline) return null;
-  const deadlineDate = new Date(deadline);
-  if (isNaN(deadlineDate.getTime())) return null;
-  const days = Math.ceil(
-    (deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
-  if (days < 0) return 'Expired';
-  if (days === 0) return 'Today';
-  if (days === 1) return '1 day left';
-  return `${days} days left`;
 }
 
 const difficultyStyles: Record<QuestDifficulty, string> = {
@@ -56,7 +44,7 @@ function avatarColor(name: string): string {
 
 export const QuestCard = memo(
   ({ quest, onClick, progress }: QuestCardProps) => {
-    const timeLabel = formatTimeRemaining(quest.deadline ?? undefined);
+    const timeLabel = formatDeadlineLabel(quest.deadline ?? undefined);
     const isUrgent =
       timeLabel && !['Expired', 'Today'].includes(timeLabel)
         ? parseInt(timeLabel) <= 3

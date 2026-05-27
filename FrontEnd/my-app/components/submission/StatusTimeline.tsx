@@ -2,6 +2,7 @@
 
 import { SubmissionStatus } from '@/lib/types/submission';
 import type { Submission } from '@/lib/types/submission';
+import { formatTimelineDate } from '@/lib/utils/date';
 
 interface StatusTimelineProps {
   submission: Submission;
@@ -13,17 +14,6 @@ interface TimelineStep {
   timestamp?: string;
   isCompleted: boolean;
   isCurrent: boolean;
-}
-
-function formatTimestamp(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 }
 
 export function StatusTimeline({ submission }: StatusTimelineProps) {
@@ -168,7 +158,7 @@ export function StatusTimeline({ submission }: StatusTimelineProps) {
                 </p>
                 {step.timestamp && (
                   <span className="text-xs text-zinc-500 dark:text-zinc-400 whitespace-nowrap">
-                    {formatTimestamp(step.timestamp)}
+                    {formatTimelineDate(step.timestamp)}
                   </span>
                 )}
               </div>

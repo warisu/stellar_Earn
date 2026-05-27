@@ -2,22 +2,11 @@
 
 import { StatusBadge } from './StatusBadge';
 import type { Submission } from '@/lib/types/submission';
+import { formatShortDate } from '@/lib/utils/date';
 
 interface SubmissionsTableProps {
   submissions: Submission[];
   onSubmissionClick?: (submission: Submission) => void;
-}
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'UTC',
-  });
 }
 
 function truncateHash(hash: string, length = 8): string {
@@ -98,7 +87,7 @@ export function SubmissionsTable({
                   {submission.quest.title}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">
-                  {formatDate(submission.createdAt)}
+                  {formatShortDate(submission.createdAt)}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm">
                   <StatusBadge status={submission.status} />

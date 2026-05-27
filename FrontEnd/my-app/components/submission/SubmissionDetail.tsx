@@ -5,22 +5,12 @@ import { StatusBadge } from './StatusBadge';
 import { StatusTimeline } from './StatusTimeline';
 import type { Submission } from '@/lib/types/submission';
 import { FocusTrap } from '@/components/a11y/FocusTrap';
+import { formatDate } from '@/lib/utils/date';
 
 interface SubmissionDetailProps {
   submission: Submission | null;
   isOpen: boolean;
   onClose: () => void;
-}
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 }
 
 export function SubmissionDetail({

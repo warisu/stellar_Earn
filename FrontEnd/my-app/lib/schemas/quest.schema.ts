@@ -1,3 +1,5 @@
+import { parseZonedDateTime, formatZonedDateTime } from '@/lib/utils/date';
+
 export type QuestCategory =
   | 'Development'
   | 'Blockchain'
@@ -98,147 +100,23 @@ export interface ValidationError {
   message: string;
 }
 
-interface DateTimeParts {
-  year: number;
-  month: number;
-  day: number;
-  hour: number;
-  minute: number;
-  second: number;
-}
-
-function parseDateTimeParts(value: string): DateTimeParts | null {
-  const match = value.match(
-    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/
-  );
-
-  if (!match) {
-    return null;
-  }
-
-  const [, year, month, day, hour, minute, second] = match;
-  return {
-    year: Number(year),
-    month: Number(month),
-    day: Number(day),
-    hour: Number(hour),
-    minute: Number(minute),
-    second: Number(second ?? '0'),
-  };
-}
-
-function getFormatter(timezone: string) {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: timezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hourCycle: 'h23',
-  });
-}
-
+/**
+ * Convert a local datetime string to a UTC ISO string using the given timezone.
+ * Delegates to the centralised date utility.
+ */
 export function zonedDateTimeToIso(
   value: string,
   timezone: string
 ): string | null {
-  const parts = parseDateTimeParts(value);
-  if (!parts) {
-    return null;
-  }
-
-  if (timezone === 'UTC') {
-    return new Date(
-      Date.UTC(
-        parts.year,
-        parts.month - 1,
-        parts.day,
-        parts.hour,
-        parts.minute,
-        parts.second
-      )
-    ).toISOString();
-  }
-
-  let formatter: Intl.DateTimeFormat;
-  try {
-    formatter = getFormatter(timezone);
-  } catch {
-    return null;
-  }
-
-  let timestamp = Date.UTC(
-    parts.year,
-    parts.month - 1,
-    parts.day,
-    parts.hour,
-    parts.minute,
-    parts.second
-  );
-
-  const targetTimestamp = timestamp;
-
-  for (let index = 0; index < 3; index += 1) {
-    const formattedParts = formatter.formatToParts(new Date(timestamp));
-    const current = {
-      year: Number(
-        formattedParts.find((part) => part.type === 'year')?.value ?? '0'
-      ),
-      month: Number(
-        formattedParts.find((part) => part.type === 'month')?.value ?? '0'
-      ),
-      day: Number(
-        formattedParts.find((part) => part.type === 'day')?.value ?? '0'
-      ),
-      hour: Number(
-        formattedParts.find((part) => part.type === 'hour')?.value ?? '0'
-      ),
-      minute: Number(
-        formattedParts.find((part) => part.type === 'minute')?.value ?? '0'
-      ),
-      second: Number(
-        formattedParts.find((part) => part.type === 'second')?.value ?? '0'
-      ),
-    };
-
-    const currentTimestamp = Date.UTC(
-      current.year,
-      current.month - 1,
-      current.day,
-      current.hour,
-      current.minute,
-      current.second
-    );
-    const diff = targetTimestamp - currentTimestamp;
-
-    if (diff === 0) {
-      break;
-    }
-
-    timestamp += diff;
-  }
-
-  const result = new Date(timestamp);
-  return Number.isNaN(result.getTime()) ? null : result.toISOString();
+  return parseZonedDateTime(value, timezone);
 }
 
+/**
+ * Format a local datetime string for human display in the given timezone.
+ * Delegates to the centralised date utility.
+ */
 export function formatWizardDateTime(value: string, timezone: string): string {
-  const isoValue = zonedDateTimeToIso(value, timezone);
-  if (!isoValue) {
-    return value || 'Not set';
-  }
-
-  try {
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-      timeZone: timezone,
-    }).format(new Date(isoValue));
-  } catch {
-    return new Date(isoValue).toLocaleString();
-  }
+  return formatZonedDateTime(value, timezone);
 }
 
 export function extractPlainTextFromHtml(value: string): string {
