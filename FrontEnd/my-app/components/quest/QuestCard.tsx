@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import React, { memo } from 'react';
 import type { Quest } from '@/lib/types/quest';
 import { QuestDifficulty } from '@/lib/types/quest';
 import { formatDeadlineLabel } from '@/lib/utils/date';

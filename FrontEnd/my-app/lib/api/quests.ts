@@ -46,10 +46,11 @@ export type {
  */
 export async function getQuests(
   filters?: QuestQueryParams,
-  cancelToken?: CancelToken
+  cancelToken?: CancelToken,
+  timeout?: number
 ): Promise<PaginatedQuestsResponse> {
   const params = buildQuestParams(filters);
-  const cacheKey = generateQuestsCacheKey(params);
+  const cacheKey = `${generateQuestsCacheKey(params)}${timeout ? `:t-${timeout}` : ''}`;
 
   return cacheManager.get(
     cacheKey,
@@ -58,6 +59,7 @@ export async function getQuests(
         get<PaginatedQuestsResponse>('/quests', {
           params,
           signal: cancelToken?.signal,
+          timeout,
         })
       ),
     3 * 60 * 1000 // 3 minutes TTL
