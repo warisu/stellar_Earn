@@ -2,18 +2,13 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { AppLayout } from '@/components/layout/AppLayout';
 import './globals.css';
-import { ToastProvider } from '@/components/notifications/Toast';
-import { ThemeProvider } from '@/app/providers/ThemeProvider';
-import { AuthProvider } from '@/app/providers/AuthProvider';
+import { RootProviders } from '@/app/providers/RootProviders';
 import { WalletConnectionModal } from '@/components/wallet/WalletConnectionModal';
-import { WalletProvider } from '@/context/WalletContext';
 import { SessionManager } from '@/components/auth/SessionManager';
-import { AnalyticsProvider } from '@/app/providers/AnalyticsProvider';
 import { ConsentBanner } from '@/components/analytics/ConsentBanner';
 import { SkipToContent } from '@/components/a11y/SkipToContent';
 import { A11yAnnouncerProvider } from '@/components/a11y/A11yAnnouncer';
 import PerformanceMonitor from '@/components/ui/PerformanceMonitor';
-import { AppErrorBoundary } from '@/components/error/ErrorBoundary';
 import { EnvValidator } from '@/components/providers/EnvValidator';
 import { SWRegister } from '@/components/SWRegister';
 
@@ -67,27 +62,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <EnvValidator>
-          <ThemeProvider>
-            <A11yAnnouncerProvider>
-              <WalletProvider>
-                <AuthProvider>
-                  <AnalyticsProvider>
-                    <ToastProvider>
-                      <AppErrorBoundary>
-                        <SkipToContent />
-                        <SWRegister />
-                        {children}
-                        <PerformanceMonitor />
-                        <ConsentBanner />
-                        <WalletConnectionModal />
-                        <SessionManager />
-                      </AppErrorBoundary>
-                    </ToastProvider>
-                  </AnalyticsProvider>
-                </AuthProvider>
-              </WalletProvider>
-            </A11yAnnouncerProvider>
-          </ThemeProvider>
+          <RootProviders>
+            <SkipToContent />
+            <SWRegister />
+            {children}
+            <PerformanceMonitor />
+            <ConsentBanner />
+            <WalletConnectionModal />
+            <SessionManager />
+          </RootProviders>
         </EnvValidator>
       </body>
     </html>
