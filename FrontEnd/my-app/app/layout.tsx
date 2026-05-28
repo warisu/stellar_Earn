@@ -38,24 +38,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const themeInitScript = `
-    (function() {
-      try {
-        var stored = localStorage.getItem('stellar_earn_theme');
-        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var theme = stored === 'dark' || stored === 'light' ? stored : (prefersDark ? 'dark' : 'light');
-        var root = document.documentElement;
-        root.classList.toggle('dark', theme === 'dark');
-        root.setAttribute('data-theme', theme);
-        root.style.colorScheme = theme;
-      } catch (e) {}
-    })();
-  `;
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* Render-blocking script prevents flash of unstyled theme on first paint */}
+        <script src="/theme-init.js" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
