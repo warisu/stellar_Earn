@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, HttpStatus, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
@@ -13,6 +13,7 @@ import {
   Submission,
   SubmissionStatus,
 } from '#src/modules/submissions/entities/submission.entity';
+import { SubmissionBuilder } from '../../../test/utils/submission.builder';
 import { Quest } from '#src/modules/quests/entities/quest.entity';
 import { User } from '#src/modules/users/entities/user.entity';
 import { Notification } from '#src/modules/notifications/entities/notification.entity';
@@ -56,15 +57,13 @@ describe('Submission Verification (e2e) - Service Layer Tests', () => {
     creator: { id: 'verifier-456' },
   };
 
-  const mockSubmission = {
-    id: 'submission-123',
-    status: SubmissionStatus.PENDING,
-    quest: mockQuest,
-    user: mockUser,
-    proof: { url: 'https://example.com/proof' },
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+  const mockSubmission = new SubmissionBuilder()
+    .withId('submission-123')
+    .withStatus(SubmissionStatus.PENDING)
+    .withQuest(mockQuest)
+    .withUser(mockUser)
+    .withProof({ url: 'https://example.com/proof' })
+    .build();
 
   // Mock repositories
   const mockSubmissionRepository = {
