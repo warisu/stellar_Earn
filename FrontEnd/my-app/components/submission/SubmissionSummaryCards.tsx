@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import type { Submission } from '@/lib/types/submission';
 import { getSubmissionStats } from '@/lib/mock/submissions';
 
@@ -7,7 +8,7 @@ interface SubmissionSummaryCardsProps {
   submissions: Submission[];
 }
 
-export function SubmissionSummaryCards({
+export const SubmissionSummaryCards = memo(function SubmissionSummaryCards({
   submissions,
 }: SubmissionSummaryCardsProps) {
   const stats = getSubmissionStats(submissions);
@@ -67,4 +68,6 @@ export function SubmissionSummaryCards({
       ))}
     </div>
   );
-}
+});
+
+SubmissionSummaryCards.displayName = 'SubmissionSummaryCards';

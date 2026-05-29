@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { StatusBadge } from './StatusBadge';
 import type { Submission } from '@/lib/types/submission';
 import { formatShortDate } from '@/lib/utils/date';
@@ -22,7 +23,7 @@ function getProofDisplay(proof: Record<string, unknown>): string {
   return 'View';
 }
 
-export function SubmissionsTable({
+export const SubmissionsTable = memo(function SubmissionsTable({
   submissions,
   onSubmissionClick,
 }: SubmissionsTableProps) {
@@ -130,4 +131,6 @@ export function SubmissionsTable({
       </table>
     </div>
   );
-}
+});
+
+SubmissionsTable.displayName = 'SubmissionsTable';

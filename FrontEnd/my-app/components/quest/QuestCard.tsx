@@ -93,9 +93,9 @@ export const QuestCard = memo(
             className="quest-card__skills"
             aria-label={`Required skills: ${quest.skills.join(', ')}`}
           >
-            {quest.skills.map((skill: string) => (
+            {quest.skills.map((skill: string, index: number) => (
               <span
-                key={skill}
+                key={`${quest.id}-skill-${skill}-${index}`}
                 className="quest-card__skill-tag"
                 aria-hidden="true"
               >

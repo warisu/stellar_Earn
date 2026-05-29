@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { StatusBadge } from './StatusBadge';
 import type { Submission } from '@/lib/types/submission';
 import { formatRelativeDate } from '@/lib/utils/date';
@@ -9,7 +10,7 @@ interface SubmissionCardProps {
   onClick?: (submission: Submission) => void;
 }
 
-export function SubmissionCard({ submission, onClick }: SubmissionCardProps) {
+export const SubmissionCard = memo(function SubmissionCard({ submission, onClick }: SubmissionCardProps) {
   const handleClick = () => {
     onClick?.(submission);
   };
@@ -52,4 +53,6 @@ export function SubmissionCard({ submission, onClick }: SubmissionCardProps) {
       </div>
     </div>
   );
-}
+});
+
+SubmissionCard.displayName = 'SubmissionCard';
