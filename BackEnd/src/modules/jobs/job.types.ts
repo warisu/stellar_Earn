@@ -32,6 +32,7 @@ export enum JobType {
   // Quest Monitoring
   QUEST_DEADLINE_CHECK = 'quest:deadline-check',
   QUEST_COMPLETION_VERIFY = 'quest:completion-verify',
+  QUEST_STATE_RECONCILE = 'quest:state-reconcile',
 }
 
 export enum JobPriority {

@@ -12,14 +12,26 @@ import { CleanupProcessor } from './processors/cleanup.processor';
 import { WebhookProcessor } from './processors/webhook.processor';
 import { AnalyticsProcessor } from './processors/analytics.processor';
 import { QuestProcessor } from './processors/quest.processor';
+import { QuestStateReconciliationProcessor } from './processors/quest-state-reconciliation.processor';
 import { JobLog, JobLogRetry, JobDependency, JobSchedule } from './entities/job-log.entity';
 import { DataExport } from '../users/entities/data-export.entity';
 import { DataExportListener } from './listeners/data-export.listener';
 import { Payout } from '../payouts/entities/payout.entity';
+import { Quest } from '../quests/entities/quest.entity';
+import { StellarModule } from '../stellar/stellar.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([JobLog, JobLogRetry, JobDependency, JobSchedule, DataExport, Payout]),
+    TypeOrmModule.forFeature([
+      JobLog,
+      JobLogRetry,
+      JobDependency,
+      JobSchedule,
+      DataExport,
+      Payout,
+      Quest,
+    ]),
+    StellarModule,
   ],
   providers: [
     JobsService,
@@ -33,6 +45,7 @@ import { Payout } from '../payouts/entities/payout.entity';
     WebhookProcessor,
     AnalyticsProcessor,
     QuestProcessor,
+    QuestStateReconciliationProcessor,
     DataExportListener,
   ],
   controllers: [JobsController],
@@ -48,6 +61,7 @@ import { Payout } from '../payouts/entities/payout.entity';
     WebhookProcessor,
     AnalyticsProcessor,
     QuestProcessor,
+    QuestStateReconciliationProcessor,
   ],
 })
 export class JobsModule {}
