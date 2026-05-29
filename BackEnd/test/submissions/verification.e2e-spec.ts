@@ -1,22 +1,22 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+﻿/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, HttpStatus, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { SubmissionsService } from '../../src/modules/submissions/submissions.service';
-import { StellarService } from '../../src/modules/stellar/stellar.service';
-import { NotificationsService } from '../../src/modules/notifications/notifications.service';
-import { SubmissionsController } from '../../src/modules/submissions/submissions.controller';
-import { JwtAuthGuard } from '../../src/modules/auth/guards/jwt-auth.guard';
+import { SubmissionsService } from '#src/modules/submissions/submissions.service';
+import { StellarService } from '#src/modules/stellar/stellar.service';
+import { NotificationsService } from '#src/modules/notifications/notifications.service';
+import { SubmissionsController } from '#src/modules/submissions/submissions.controller';
+import { JwtAuthGuard } from '#src/modules/auth/guards/jwt-auth.guard';
 import {
   Submission,
   SubmissionStatus,
-} from '../../src/modules/submissions/entities/submission.entity';
-import { Quest } from '../../src/modules/quests/entities/quest.entity';
-import { User } from '../../src/modules/users/entities/user.entity';
-import { Notification } from '../../src/modules/notifications/entities/notification.entity';
-import { UserRole } from '../../src/modules/auth/enums/user-role.enum';
+} from '#src/modules/submissions/entities/submission.entity';
+import { Quest } from '#src/modules/quests/entities/quest.entity';
+import { User } from '#src/modules/users/entities/user.entity';
+import { Notification } from '#src/modules/notifications/entities/notification.entity';
+import { UserRole } from '#src/modules/auth/enums/user-role.enum';
 
 /**
  * TODO: Full E2E Integration Tests

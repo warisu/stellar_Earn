@@ -345,7 +345,7 @@ fn test_earn_quest_with_oracle_integration() {
 #[test]
 fn test_external_contract_creates_quest() {
     let env = Env::default();
-    env.mock_all_auths();
+    env.mock_all_auths_allowing_non_root_auth();
 
     let (earn_quest_addr, earn_quest_client) = setup_earn_quest(&env);
     let external_addr = setup_external_contract(&env);
@@ -414,7 +414,7 @@ fn test_external_contract_queries_quest_status() {
 #[test]
 fn test_external_contract_submits_proof() {
     let env = Env::default();
-    env.mock_all_auths();
+    env.mock_all_auths_allowing_non_root_auth();
 
     let (earn_quest_addr, earn_quest_client) = setup_earn_quest(&env);
     let external_addr = setup_external_contract(&env);
@@ -552,7 +552,7 @@ fn test_external_contract_handles_quest_not_found() {
 #[should_panic(expected = "Error")]
 fn test_external_contract_handles_duplicate_quest() {
     let env = Env::default();
-    env.mock_all_auths();
+    env.mock_all_auths_allowing_non_root_auth();
 
     let (earn_quest_addr, earn_quest_client) = setup_earn_quest(&env);
     let external_addr = setup_external_contract(&env);
@@ -663,7 +663,7 @@ fn test_cross_contract_badge_management() {
 #[test]
 fn test_complete_quest_workflow_via_external_contract() {
     let env = Env::default();
-    env.mock_all_auths();
+    env.mock_all_auths_allowing_non_root_auth();
 
     let (earn_quest_addr, earn_quest_client) = setup_earn_quest(&env);
     let external_addr = setup_external_contract(&env);
@@ -764,7 +764,7 @@ fn test_multi_contract_coordination() {
 #[test]
 fn test_cross_contract_call_overhead() {
     let env = Env::default();
-    env.mock_all_auths();
+    env.mock_all_auths_allowing_non_root_auth();
 
     let (earn_quest_addr, earn_quest_client) = setup_earn_quest(&env);
     let external_addr = setup_external_contract(&env);

@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
+﻿import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { PayoutReconciliationProcessor } from '../../src/modules/jobs/processors/payout-reconciliation.processor';
-import { JobLogService } from '../../src/modules/jobs/services/job-log.service';
-import { Payout, PayoutStatus } from '../../src/modules/payouts/entities/payout.entity';
+import { PayoutReconciliationProcessor } from '#src/modules/jobs/processors/payout-reconciliation.processor';
+import { JobLogService } from '#src/modules/jobs/services/job-log.service';
+import { Payout, PayoutStatus } from '#src/modules/payouts/entities/payout.entity';
 
 describe('PayoutReconciliationProcessor', () => {
   let module: TestingModule;
@@ -30,7 +30,7 @@ describe('PayoutReconciliationProcessor', () => {
     {
       id: 'payout-3',
       status: PayoutStatus.PROCESSING,
-      transactionHash: null, // No hash yet — should be skipped
+      transactionHash: null, // No hash yet â€” should be skipped
       stellarLedger: null,
       processedAt: null,
       settlementConfirmedAt: null,
@@ -85,7 +85,7 @@ describe('PayoutReconciliationProcessor', () => {
 
     it('should skip payouts without a transaction hash', async () => {
       await processor.runReconciliation();
-      // payout-3 has no hash — save should only be called for payout-1 and payout-2
+      // payout-3 has no hash â€” save should only be called for payout-1 and payout-2
       const savedIds = payoutRepository.save.mock.calls.map(
         (call: any[]) => call[0].id,
       );

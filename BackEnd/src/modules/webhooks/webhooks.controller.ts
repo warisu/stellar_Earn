@@ -26,13 +26,20 @@ import {
   WebhookResponseDto,
   WebhookHealthResponseDto,
 } from './dto/webhook-response.dto';
+import { ExecutionTraceService } from '../trace/execution-trace.service';
+import { TraceIdUtil } from '../trace/trace-id.util';
+import { TraceContextStorage, TraceContext } from '../trace/trace-context.storage';
+import { TraceStatus } from '../trace/trace.types';
 
 @ApiTags('Webhooks')
 @Controller('webhooks')
 export class WebhooksController {
   private readonly logger = new Logger(WebhooksController.name);
 
-  constructor(private readonly webhooksService: WebhooksService) {}
+  constructor(
+    private readonly webhooksService: WebhooksService,
+    private readonly traceService: ExecutionTraceService,
+  ) {}
 
   /**
    * GitHub webhook endpoint
@@ -60,44 +67,72 @@ export class WebhooksController {
     @Headers('x-hub-signature-256') signature: string,
     @Headers() headers: any,
   ): Promise<WebhookResponse> {
-    try {
-      this.logger.log(`Received GitHub webhook: ${eventType} (${deliveryId})`);
+    if (!eventType) throw new BadRequestException('Missing X-GitHub-Event header');
+    if (!deliveryId) throw new BadRequestException('Missing X-GitHub-Delivery header');
 
-      // Validate required headers
-      if (!eventType) {
-        throw new BadRequestException('Missing X-GitHub-Event header');
+    const traceId = TraceIdUtil.generate(deliveryId);
+    const traceCtx: TraceContext = { traceId, webhookEventId: deliveryId };
+
+    return TraceContextStorage.run(traceCtx, async () => {
+      this.logger.log(`[${traceId}] Received GitHub webhook: ${eventType} (${deliveryId})`);
+
+      await this.traceService.createTrace({
+        traceId,
+        webhookEventId: deliveryId,
+        questId: payload?.questId ?? 'unknown',
+        submitterAddress: payload?.submitterAddress ?? 'unknown',
+      });
+
+      try {
+        const event: WebhookEvent = {
+          id: deliveryId,
+          type: eventType,
+          payload,
+          timestamp: new Date(),
+          source: 'github',
+          signature,
+          secret: process.env.GITHUB_WEBHOOK_SECRET,
+        };
+
+        const response = await this.webhooksService.processWebhook(event);
+
+        if (!response.success) {
+          await this.traceService.appendEvent(traceId, TraceStatus.FAILED, response.message);
+          this.logger.warn(`[${traceId}] GitHub webhook processing failed: ${response.message}`);
+          throw new UnauthorizedException(response.message);
+        }
+
+        // Link on-chain tx hash if the service returns one
+        if (response.txHash) {
+          await this.traceService.linkOnchain({
+            traceId,
+            txHash: response.txHash,
+            status: TraceStatus.SUBMITTED,
+            message: `GitHub event '${eventType}' submitted on-chain.`,
+            meta: { source: 'github', eventType },
+          });
+        } else {
+          await this.traceService.appendEvent(
+            traceId,
+            TraceStatus.CONFIRMED,
+            `GitHub event '${eventType}' processed successfully.`,
+          );
+        }
+
+        return response;
+      } catch (error) {
+        if (!(error instanceof UnauthorizedException)) {
+          await this.traceService.appendEvent(
+            traceId,
+            TraceStatus.FAILED,
+            `Unhandled error: ${error.message}`,
+            { error: error.message },
+          );
+        }
+        this.logger.error(`[${traceId}] GitHub webhook error: ${error.message}`, error.stack);
+        throw error;
       }
-
-      if (!deliveryId) {
-        throw new BadRequestException('Missing X-GitHub-Delivery header');
-      }
-
-      // Create webhook event
-      const event: WebhookEvent = {
-        id: deliveryId,
-        type: eventType,
-        payload: payload,
-        timestamp: new Date(),
-        source: 'github',
-        signature: signature,
-        secret: process.env.GITHUB_WEBHOOK_SECRET,
-      };
-
-      // Process the webhook
-      const response = await this.webhooksService.processWebhook(event);
-
-      if (!response.success) {
-        this.logger.warn(
-          `GitHub webhook processing failed: ${response.message}`,
-        );
-        throw new UnauthorizedException(response.message);
-      }
-
-      return response;
-    } catch (error) {
-      this.logger.error(`GitHub webhook error: ${error.message}`, error.stack);
-      throw error;
-    }
+    });
   }
 
   /**
@@ -114,10 +149,7 @@ export class WebhooksController {
     description: 'Verification processed',
     type: WebhookResponseDto,
   })
-  @ApiResponse({
-    status: 400,
-    description: 'Invalid webhook headers or payload',
-  })
+  @ApiResponse({ status: 400, description: 'Invalid webhook headers or payload' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async handleApiVerificationWebhook(
     @Body() payload: any,
@@ -126,50 +158,76 @@ export class WebhooksController {
     @Headers('authorization') authHeader: string,
     @Headers() headers: any,
   ): Promise<WebhookResponse> {
-    try {
-      this.logger.log(
-        `Received API verification webhook: ${eventType} (${webhookId})`,
-      );
+    if (!eventType) throw new BadRequestException('Missing X-Event-Type header');
+    if (!webhookId) throw new BadRequestException('Missing X-Webhook-ID header');
 
-      // Validate required headers
-      if (!eventType) {
-        throw new BadRequestException('Missing X-Event-Type header');
+    const traceId = TraceIdUtil.generate(webhookId);
+    const traceCtx: TraceContext = { traceId, webhookEventId: webhookId };
+
+    return TraceContextStorage.run(traceCtx, async () => {
+      this.logger.log(`[${traceId}] Received API verification webhook: ${eventType} (${webhookId})`);
+
+      await this.traceService.createTrace({
+        traceId,
+        webhookEventId: webhookId,
+        questId: payload?.questId ?? 'unknown',
+        submitterAddress: payload?.submitterAddress ?? 'unknown',
+      });
+
+      try {
+        let signature: string | undefined;
+        if (authHeader?.startsWith('Bearer ')) {
+          signature = authHeader.substring(7);
+        }
+
+        const event: WebhookEvent = {
+          id: webhookId,
+          type: eventType,
+          payload,
+          timestamp: new Date(),
+          source: 'api',
+          signature,
+          secret: process.env.API_WEBHOOK_SECRET,
+        };
+
+        const response = await this.webhooksService.processWebhook(event);
+
+        if (!response.success) {
+          await this.traceService.appendEvent(traceId, TraceStatus.FAILED, response.message);
+          this.logger.warn(`[${traceId}] API webhook processing failed: ${response.message}`);
+          throw new UnauthorizedException(response.message);
+        }
+
+        if (response.txHash) {
+          await this.traceService.linkOnchain({
+            traceId,
+            txHash: response.txHash,
+            status: TraceStatus.SUBMITTED,
+            message: `API event '${eventType}' submitted on-chain.`,
+            meta: { source: 'api', eventType },
+          });
+        } else {
+          await this.traceService.appendEvent(
+            traceId,
+            TraceStatus.CONFIRMED,
+            `API event '${eventType}' processed successfully.`,
+          );
+        }
+
+        return response;
+      } catch (error) {
+        if (!(error instanceof UnauthorizedException)) {
+          await this.traceService.appendEvent(
+            traceId,
+            TraceStatus.FAILED,
+            `Unhandled error: ${error.message}`,
+            { error: error.message },
+          );
+        }
+        this.logger.error(`[${traceId}] API webhook error: ${error.message}`, error.stack);
+        throw error;
       }
-
-      if (!webhookId) {
-        throw new BadRequestException('Missing X-Webhook-ID header');
-      }
-
-      // Extract signature from Authorization header (Bearer token format)
-      let signature: string | undefined;
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        signature = authHeader.substring(7);
-      }
-
-      // Create webhook event
-      const event: WebhookEvent = {
-        id: webhookId,
-        type: eventType,
-        payload: payload,
-        timestamp: new Date(),
-        source: 'api',
-        signature: signature,
-        secret: process.env.API_WEBHOOK_SECRET,
-      };
-
-      // Process the webhook
-      const response = await this.webhooksService.processWebhook(event);
-
-      if (!response.success) {
-        this.logger.warn(`API webhook processing failed: ${response.message}`);
-        throw new UnauthorizedException(response.message);
-      }
-
-      return response;
-    } catch (error) {
-      this.logger.error(`API webhook error: ${error.message}`, error.stack);
-      throw error;
-    }
+    });
   }
 
   /**
@@ -194,30 +252,68 @@ export class WebhooksController {
     @Headers('x-event-type') eventType: string,
     @Param('service') service: string,
   ): Promise<WebhookResponse> {
-    try {
-      this.logger.log(`Received generic webhook from ${service}: ${eventType}`);
+    const eventId = this.generateEventId();
+    const traceId = TraceIdUtil.generate(eventId);
+    const traceCtx: TraceContext = { traceId, webhookEventId: eventId };
 
-      const event: WebhookEvent = {
-        id: this.generateEventId(),
-        type: eventType || 'unknown',
-        payload: payload,
-        timestamp: new Date(),
-        source: service,
-        signature: signature,
-        secret: process.env[`${service.toUpperCase()}_WEBHOOK_SECRET`],
-      };
+    return TraceContextStorage.run(traceCtx, async () => {
+      this.logger.log(`[${traceId}] Received generic webhook from ${service}: ${eventType}`);
 
-      const response = await this.webhooksService.processWebhook(event);
+      await this.traceService.createTrace({
+        traceId,
+        webhookEventId: eventId,
+        questId: payload?.questId ?? 'unknown',
+        submitterAddress: payload?.submitterAddress ?? 'unknown',
+      });
 
-      if (!response.success) {
-        throw new UnauthorizedException(response.message);
+      try {
+        const event: WebhookEvent = {
+          id: eventId,
+          type: eventType || 'unknown',
+          payload,
+          timestamp: new Date(),
+          source: service,
+          signature,
+          secret: process.env[`${service.toUpperCase()}_WEBHOOK_SECRET`],
+        };
+
+        const response = await this.webhooksService.processWebhook(event);
+
+        if (!response.success) {
+          await this.traceService.appendEvent(traceId, TraceStatus.FAILED, response.message);
+          throw new UnauthorizedException(response.message);
+        }
+
+        if (response.txHash) {
+          await this.traceService.linkOnchain({
+            traceId,
+            txHash: response.txHash,
+            status: TraceStatus.SUBMITTED,
+            message: `Generic event from '${service}' submitted on-chain.`,
+            meta: { source: service, eventType },
+          });
+        } else {
+          await this.traceService.appendEvent(
+            traceId,
+            TraceStatus.CONFIRMED,
+            `Generic event from '${service}' processed successfully.`,
+          );
+        }
+
+        return response;
+      } catch (error) {
+        if (!(error instanceof UnauthorizedException)) {
+          await this.traceService.appendEvent(
+            traceId,
+            TraceStatus.FAILED,
+            `Unhandled error: ${error.message}`,
+            { error: error.message },
+          );
+        }
+        this.logger.error(`[${traceId}] Generic webhook error: ${error.message}`, error.stack);
+        throw error;
       }
-
-      return response;
-    } catch (error) {
-      this.logger.error(`Generic webhook error: ${error.message}`, error.stack);
-      throw error;
-    }
+    });
   }
 
   /**

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GithubHandler } from './handlers/github.handler';
 import { ApiHandler } from './handlers/api.handler';
 import { verifyWebhookSignature } from './utils/signature';
+import { currentTraceId } from '../trace/trace-context.storage';
 
 export interface WebhookEvent {
   id: string;
@@ -19,6 +20,10 @@ export interface WebhookResponse {
   message: string;
   processedAt: Date;
   data?: any;
+  /** Stellar transaction hash, populated when on-chain execution occurs. */
+  txHash?: string;
+  /** Canonical trace ID linking this webhook to its on-chain execution. */
+  traceId?: string;
 }
 
 @Injectable()
@@ -52,6 +57,7 @@ export class WebhooksService {
             eventId: event.id,
             message: 'Invalid webhook signature',
             processedAt: new Date(),
+            traceId: currentTraceId(),
           };
         }
       }
@@ -73,6 +79,7 @@ export class WebhooksService {
             eventId: event.id,
             message: `Unsupported webhook source: ${event.source}`,
             processedAt: new Date(),
+            traceId: currentTraceId(),
           };
       }
 
@@ -84,6 +91,9 @@ export class WebhooksService {
         message: 'Webhook processed successfully',
         processedAt: new Date(),
         data: result,
+        // txHash is populated by the handler if an on-chain tx was submitted
+        txHash: result?.txHash,
+        traceId: currentTraceId(),
       };
     } catch (error) {
       this.logger.error(`Failed to process webhook ${event.id}:`, error.stack);
@@ -92,6 +102,7 @@ export class WebhooksService {
         eventId: event.id,
         message: `Failed to process webhook: ${error.message}`,
         processedAt: new Date(),
+        traceId: currentTraceId(),
       };
     }
   }

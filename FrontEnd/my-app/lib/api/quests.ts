@@ -40,19 +40,29 @@ export type {
 
 /**
  * Fetch quests with optional filters and pagination.
+ * Results are cached for 3 minutes with automatic request deduplication.
+ * Multiple simultaneous requests with identical parameters will share the same network call.
  * Retries up to 3 times on transient failures.
  */
 export async function getQuests(
   filters?: QuestQueryParams,
-  cancelToken?: CancelToken
+  cancelToken?: CancelToken,
+  timeout?: number
 ): Promise<PaginatedQuestsResponse> {
   const params = buildQuestParams(filters);
+  const cacheKey = `${generateQuestsCacheKey(params)}${timeout ? `:t-${timeout}` : ''}`;
 
-  return withRetry(() =>
-    get<PaginatedQuestsResponse>('/quests', {
-      params,
-      signal: cancelToken?.signal,
-    })
+  return cacheManager.get(
+    cacheKey,
+    () =>
+      withRetry(() =>
+        get<PaginatedQuestsResponse>('/quests', {
+          params,
+          signal: cancelToken?.signal,
+          timeout,
+        })
+      ),
+    3 * 60 * 1000 // 3 minutes TTL
   );
 }
 
@@ -118,6 +128,23 @@ export async function deleteQuest(id: string): Promise<void> {
 // ---------------------------------------------------------------------------
 // Utility
 // ---------------------------------------------------------------------------
+
+/**
+ * Generate a cache key from quest query parameters.
+ * Serializes all filter parameters to create a unique key for caching.
+ * Undefined values are excluded to avoid collision between different filter states.
+ */
+function generateQuestsCacheKey(
+  params: Record<string, string | number | undefined>
+): string {
+  const filteredParams = Object.entries(params)
+    .filter(([, value]) => value !== undefined)
+    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
+
+  return `quests-list:${filteredParams || 'default'}`;
+}
 
 function buildQuestParams(
   filters?: QuestQueryParams

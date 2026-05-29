@@ -9,3 +9,8 @@ next-env.d.ts
 coverage
 playwright-report
 test-results
+
+# FE-068 — keep author-controlled formatting in changelog & policy artefacts.
+CHANGELOG.md
+.changeset/
+docs/TYPE_CHANGES_POLICY.md

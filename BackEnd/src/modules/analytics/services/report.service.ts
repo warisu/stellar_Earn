@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AnalyticsReport, ReportType, ReportFormat, ReportStatus } from '../entities/analytics-report.entity';
 import { User as AnalyticsUser } from '../entities/user.entity';
-import { PlatformAnalyticsService } from '../services/platform-analytics.service';
-import { QuestAnalyticsService } from '../services/quest-analytics.service';
-import { UserAnalyticsService } from '../services/user-analytics.service';
+import { PlatformAnalyticsService } from './platform-analytics.service';
+import { QuestAnalyticsService } from './quest-analytics.service';
+import { UserAnalyticsService } from './user-analytics.service';
 import { BaseAnalyticsExporter, ExportOptions, ExportResult } from '../exporters/base-exporter';
 import { AnalyticsQueryDto, Granularity } from '../dto/analytics-query.dto';
 

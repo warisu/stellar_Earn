@@ -1,19 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
+﻿import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '#src/app.module';
 import { Keypair } from 'stellar-sdk';
 import { DataSource } from 'typeorm';
 import {
   Quest,
   QuestStatus,
-} from '../../src/modules/analytics/entities/quest.entity';
+} from '#src/modules/analytics/entities/quest.entity';
 import {
   Submission,
   SubmissionStatus,
-} from '../../src/modules/analytics/entities/submission.entity';
-import { Payout } from '../../src/modules/analytics/entities/payout.entity';
-import { User } from 'src/modules/users/entities/user.entity';
+} from '#src/modules/analytics/entities/submission.entity';
+import { Payout } from '#src/modules/analytics/entities/payout.entity';
+import { User } from '#src/modules/users/entities/user.entity';
 
 describe('Analytics (e2e)', () => {
   let app: INestApplication;

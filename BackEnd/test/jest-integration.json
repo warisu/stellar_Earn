@@ -18,7 +18,10 @@
       "tsconfig": "./tsconfig.test.json"
     }
   },
-
+  "moduleNameMapper": {
+    "^#src/(.*)$": "<rootDir>/../src/$1",
+    "^src/(.*)$": "<rootDir>/../src/$1"
+  },
   "setupFilesAfterEnv": ["<rootDir>/setup-integration-afterenv.ts"]
 }
 

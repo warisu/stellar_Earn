@@ -1,18 +1,18 @@
-import { Keypair, StrKey } from 'stellar-sdk';
+﻿import { Keypair, StrKey } from 'stellar-sdk';
 import { validate } from 'class-validator';
 import {
   AddressValidationResult,
   StellarAddressType,
   StellarNetwork,
   WalletAddressUtils,
-} from '../../src/common/utils/wallet-address.utils';
+} from '#src/common/utils/wallet-address.utils';
 import {
   IsWalletAddress,
   IsWalletAddressConstraint,
-} from '../../src/common/decorators/is-wallet-address.decorator';
+} from '#src/common/decorators/is-wallet-address.decorator';
 
 // ---------------------------------------------------------------------------
-// Shared test fixtures — generated once per suite to keep tests fast.
+// Shared test fixtures â€” generated once per suite to keep tests fast.
 // ---------------------------------------------------------------------------
 const keypair = Keypair.random();
 const VALID_PUBLIC_KEY = keypair.publicKey();

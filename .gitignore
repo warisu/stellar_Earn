@@ -1,4 +1,4 @@
-﻿# Rust / Cargo
+# Rust / Cargo
 target/
 **/target/
 Cargo.lock
@@ -11,8 +11,6 @@ Cargo.lock
 # Node / JS
 **/node_modules/
 pnpm-lock.yaml
-package-lock.json
-yarn.lock
 
 # IDE / OS
 .vscode/

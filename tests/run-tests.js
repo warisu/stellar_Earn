@@ -1,7 +1,9 @@
-const { runAll } = require('./check-orphaned-scripts.test');
+const { runAll: runOrphanedScriptTests } = require('./check-orphaned-scripts.test');
+const { runAll: runContractChangelogDisciplineTests } = require('./check-contract-changelog-discipline.test');
 
 try {
-  runAll();
+  runOrphanedScriptTests();
+  runContractChangelogDisciplineTests();
   console.log('All tests passed');
   process.exit(0);
 } catch (e) {

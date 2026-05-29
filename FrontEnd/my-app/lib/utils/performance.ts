@@ -1,4 +1,5 @@
 import type { Metric } from 'web-vitals';
+import { sloTracker } from '@/lib/slo/tracker';
 
 export const trackPerformance = (
   metricName: string,
@@ -8,8 +9,8 @@ export const trackPerformance = (
   if (typeof window !== 'undefined' && 'performance' in window) {
     console.log(`[Performance] ${metricName}: ${value}ms`, extra || '');
 
-    // You could send this to an analytics endpoint here
-    // analytics.track('Performance Metric', { metricName, value, ...extra });
+    // Track performance for SLO monitoring
+    sloTracker.trackPerformance(metricName, value);
   }
 };
 

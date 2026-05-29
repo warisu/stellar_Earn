@@ -269,6 +269,34 @@ soroban contract invoke \
   --fn get_user_stats \
   --arg address=<stellar-address>
 ```
+## Optional Make/Just task runner for contracts
+
+For convenience there are optional task runners in the contract folder to streamline common contract commands. You can use either `just` (preferred if installed) or plain `make`.
+
+- Files: [contracts/earn-quest](contracts/earn-quest)
+
+Using `just` (install from https://github.com/casey/just):
+
+```bash
+cd contracts/earn-quest
+just build      # build wasm target
+just test       # run contract tests
+SOROBAN_SECRET_KEY=... just deploy   # deploy using env variables
+```
+
+Using `make`:
+
+```bash
+cd contracts/earn-quest
+make build
+make test
+SOROBAN_SECRET_KEY=... make deploy
+```
+
+Notes:
+
+- The deploy steps expect `SOROBAN_SECRET_KEY`, `SOROBAN_RPC_URL` (or `STELLAR_NETWORK`) and `CONTRACT_ID` (for invoke helpers) to be set in your environment or `.env` files.
+- These runners are optional helpers — feel free to edit the invoke targets to include real arguments required by your deployment and invoke workflows.
 
 ## Testing
 
