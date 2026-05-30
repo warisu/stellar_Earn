@@ -131,7 +131,7 @@ export class CacheService {
   /**
    * Return current cache statistics.
    */
-  getStats(): CacheStats {
+  getStats(key?: string): CacheStats {
     const total = this.hits + this.misses;
     return {
       hits: this.hits,
@@ -151,5 +151,19 @@ export class CacheService {
     } catch (err) {
       this.logger.warn(`Cache flush error: ${err.message}`);
     }
+  }
+
+  /**
+   * Clear all cache (alias for flush).
+   */
+  async clear(): Promise<void> {
+    return this.flush();
+  }
+
+  /**
+   * Delete pattern or prefix from cache (alias for invalidatePrefix).
+   */
+  async deletePattern(pattern: string): Promise<void> {
+    return this.invalidatePrefix(pattern);
   }
 }

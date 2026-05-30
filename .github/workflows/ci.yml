@@ -24,13 +24,20 @@ jobs:
           components: rustfmt, clippy
           targets: wasm32-unknown-unknown
 
+      - name: Remove Cargo.lock to prevent cache issues
+        run: |
+          if [ -f "Cargo.lock" ]; then
+            rm Cargo.lock
+            echo "Removed Cargo.lock to prevent CI cache corruption"
+          fi
+
       - name: Cache cargo registry
         uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('Contract/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
             ${{ runner.os }}-cargo-registry-
 
@@ -38,7 +45,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Contract/target
-          key: ${{ runner.os }}-cargo-target-${{ hashFiles('Contract/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
             ${{ runner.os }}-cargo-target-
 

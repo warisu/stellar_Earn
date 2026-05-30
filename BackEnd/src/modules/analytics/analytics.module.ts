@@ -6,6 +6,7 @@ import { PlatformAnalyticsService } from './services/platform-analytics.service'
 import { QuestAnalyticsService } from './services/quest-analytics.service';
 import { UserAnalyticsService } from './services/user-analytics.service';
 import { CacheService } from './services/cache.service';
+import { StreamExportService } from './services/stream-export.service';
 import { Quest } from './entities/quest.entity';
 import { Submission } from './entities/submission.entity';
 import { Payout } from './entities/payout.entity';
@@ -32,11 +33,13 @@ import { User } from '../users/entities/user.entity';
     QuestAnalyticsService,
     UserAnalyticsService,
     CacheService,
+    StreamExportService,
   ],
   exports: [
     PlatformAnalyticsService,
     QuestAnalyticsService,
     UserAnalyticsService,
+    StreamExportService,
   ],
 })
 export class AnalyticsModule {}
