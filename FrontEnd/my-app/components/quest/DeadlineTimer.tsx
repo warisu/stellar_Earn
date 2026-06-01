@@ -35,7 +35,7 @@ export function DeadlineTimer({
     return () => clearInterval(interval);
     // Only re-run when the deadline string or the external isExpired flag changes,
     // not on every tick — avoids interval thrash.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [deadline, isExpired]);
 
   if (isExpired || timeRemaining.isExpired) {

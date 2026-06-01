@@ -108,12 +108,15 @@ export function WalletConnectionModal() {
     <AnimatePresence>
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <motion.div
+          <motion.button
+            type="button"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm border-none p-0"
             onClick={closeModal}
+            aria-label="Close modal"
+            tabIndex={-1}
           />
 
           <FocusTrap active={isModalOpen}>

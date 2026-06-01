@@ -21,18 +21,11 @@ export const SubmissionCard = memo(function SubmissionCard({
   const formattedDate = formatRelativeDate(submission.createdAt);
 
   return (
-    <div
+    <button
       onClick={handleClick}
-      className="group cursor-pointer rounded-lg border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
+      className="group cursor-pointer rounded-lg border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 text-left"
       aria-label={`View submission for ${submission.quest.title}`}
+      type="button"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
@@ -54,7 +47,7 @@ export const SubmissionCard = memo(function SubmissionCard({
           <StatusBadge status={submission.status} />
         </div>
       </div>
-    </div>
+    </button>
   );
 });
 

@@ -197,7 +197,8 @@ export function FileUpload({
 
   return (
     <div className="w-full">
-      <div
+      <button
+        type="button"
         className={`relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors ${
           isDragging
             ? 'border-[#089ec3] bg-[#089ec3]/5'
@@ -206,20 +207,13 @@ export function FileUpload({
               : selectedFile
                 ? 'border-green-300 bg-green-50 dark:border-green-800 dark:bg-green-900/10'
                 : 'border-zinc-300 bg-zinc-50 hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-800/50 dark:hover:border-zinc-600'
-        } ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+        } ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} bg-transparent text-left`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onClick={handleClick}
-        role="button"
-        tabIndex={disabled ? -1 : 0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleClick();
-          }
-        }}
+        disabled={disabled}
         aria-label="Upload file"
       >
         <input
@@ -303,7 +297,7 @@ export function FileUpload({
             </p>
           </>
         )}
-      </div>
+      </button>
 
       {displayError && (
         <p className="mt-2 text-sm text-red-600 dark:text-red-400">

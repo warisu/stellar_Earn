@@ -58,17 +58,10 @@ export const QuestCard = memo(
     const cardLabel = `${quest.title}. Category: ${quest.category ?? 'Uncategorized'}, Difficulty: ${quest.difficulty}, Reward: ${rewardLabel}${timeInfo}`;
 
     return (
-      <article
-        role="button"
-        tabIndex={0}
-        aria-label={cardLabel}
+      <button
+        type="button"
         onClick={handleClick}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleClick();
-          }
-        }}
+        aria-label={cardLabel}
         className="quest-card"
       >
         <div className="quest-card__top" aria-hidden="true">
@@ -246,7 +239,7 @@ export const QuestCard = memo(
         >
           Quick Apply →
         </button>
-      </article>
+      </button>
     );
   }
 );
