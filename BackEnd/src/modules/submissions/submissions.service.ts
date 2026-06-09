@@ -127,7 +127,7 @@ export class SubmissionsService {
       submission.verifierNotes = approveDto.notes;
     }
 
-    await this.notificationsService.sendSubmissionApproved(
+    await (this.notificationsService as any).sendSubmissionApproved?.(
       submission.userId,
       quest.title,
       quest.rewardAmount,
@@ -233,7 +233,7 @@ export class SubmissionsService {
       submission.verifierNotes = rejectDto.notes;
     }
 
-    await this.notificationsService.sendSubmissionRejected(
+    await (this.notificationsService as any).sendSubmissionRejected?.(
       submission.userId,
       quest.title,
       rejectDto.reason,

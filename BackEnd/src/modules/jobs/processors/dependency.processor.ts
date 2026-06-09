@@ -1,22 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Processor, Process } from '@nestjs/bullmq';
+import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { DependencyFreshnessCheckPayload } from '../job.types';
-import { DependencyFreshnessService } from '../../common/services/dependency-freshness.service';
+import { DependencyFreshnessService } from '../../../common/services/dependency-freshness.service';
 
 @Injectable()
 @Processor('maintenance')
-export class DependencyProcessor {
+export class DependencyProcessor extends WorkerHost {
   private readonly logger = new Logger(DependencyProcessor.name);
 
   constructor(
     private readonly dependencyFreshnessService: DependencyFreshnessService,
-  ) {}
+  ) {
+    super();
+  }
 
-  @Process('dependency:freshness-check')
-  async handleDependencyFreshnessCheck(
-    job: Job<DependencyFreshnessCheckPayload>,
-  ): Promise<void> {
+  async process(job: Job<DependencyFreshnessCheckPayload>): Promise<void> {
+    if (job.name !== 'dependency:freshness-check') return;
     this.logger.log(
       `Processing dependency freshness check for ${job.data.repositoryOwner}/${job.data.repositoryName}`,
     );

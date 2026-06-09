@@ -1,6 +1,7 @@
 import { Module, Global } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { JobsModule } from '../modules/jobs/jobs.module';
 import { EventsService } from './events.service';
 import { AuditLogService } from './services/audit-log.service';
 import { RetryService } from './services/retry.service';
@@ -34,6 +35,7 @@ import { PayoutListener } from './listeners/payout.listener';
       ignoreErrors: false,
     }),
     TypeOrmModule.forFeature([EventStore, PoisonMessage]),
+    JobsModule,
   ],
   providers: [
     EventsService,

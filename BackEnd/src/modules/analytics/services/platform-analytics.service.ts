@@ -205,8 +205,8 @@ export class PlatformAnalyticsService {
       Expired: 0,
     };
 
-    quests.forEach((q) => {
-      result[q.status] = parseInt(q.count);
+    quests.forEach((q: any) => {
+      result[q.status as keyof typeof result] = parseInt(q.count);
     });
 
     return result;
@@ -229,8 +229,8 @@ export class PlatformAnalyticsService {
       Paid: 0,
     };
 
-    submissions.forEach((s) => {
-      result[s.status] = parseInt(s.count);
+    submissions.forEach((s: any) => {
+      result[s.status as keyof typeof result] = parseInt(s.count);
     });
 
     return result;

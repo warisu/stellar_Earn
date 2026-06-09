@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JobsService } from './jobs.service';
 import { JobsController } from './jobs.controller';
 import { JobLogService } from './services/job-log.service';
@@ -33,6 +34,7 @@ import { DependencyFreshnessService } from '../../common/services/dependency-fre
       Payout,
       Quest,
     ]),
+    EventEmitterModule,
     StellarModule,
   ],
   providers: [

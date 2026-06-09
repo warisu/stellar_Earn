@@ -328,7 +328,7 @@ export class JobLogService {
     };
 
     for (const stat of stats) {
-      result[stat.status] = parseInt(stat.count);
+      result[stat.status as keyof typeof result] = parseInt(stat.count);
     }
 
     return result;

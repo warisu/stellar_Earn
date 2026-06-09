@@ -117,10 +117,10 @@ export function SubmissionDetail({
               </h3>
               <div className="space-y-2">
                 <h4 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-                  {submission.quest.title}
+                  {submission.quest?.title}
                 </h4>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                  {submission.quest.description}
+                  {submission.quest?.description}
                 </p>
                 <div className="flex items-center gap-4 pt-2">
                   <div>
@@ -128,17 +128,17 @@ export function SubmissionDetail({
                       Reward:
                     </span>
                     <span className="ml-2 text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                      {submission.quest.rewardAmount}{' '}
-                      {submission.quest.rewardAsset}
+                      {submission.quest?.rewardAmount}{' '}
+                      {submission.quest?.rewardAsset}
                     </span>
                   </div>
-                  {submission.quest.deadline && (
+                  {submission.quest?.deadline && (
                     <div>
                       <span className="text-sm text-zinc-500 dark:text-zinc-400">
                         Deadline:
                       </span>
                       <span className="ml-2 text-sm text-zinc-900 dark:text-zinc-50">
-                        {formatDate(submission.quest.deadline)}
+                        {formatDate(submission.quest!.deadline)}
                       </span>
                     </div>
                   )}

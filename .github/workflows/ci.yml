@@ -135,24 +135,29 @@ jobs:
           node scripts/generate-provenance.js
           node scripts/check-provenance.js
 
-      - name: License policy check
       - name: License check
         run: |
           cargo install cargo-deny || true
           make license-check
 
-    orphaned-scripts-check:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+  orphaned-scripts-check:
+    name: Orphaned Scripts Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Set up Node.js
-          uses: actions/setup-node@v4
-          with:
-            node-version: '18'
-      - name: Build WASM
-        run: cargo build --release --target wasm32-unknown-unknown
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          if [ -f package.json ]; then npm ci; fi
+
+      - name: Run orphaned scripts check
+        run: node scripts/check-orphaned-scripts.js
 
   contract-checks-gate:
     name: Contract Checks Gate

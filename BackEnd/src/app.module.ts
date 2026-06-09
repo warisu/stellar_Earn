@@ -7,13 +7,33 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppLoggerService } from './common/logger/logger.service';
 import { SecurityMiddleware } from './common/middleware/security.middleware';
-
-import { AuthModule } from './modules/auth/auth.module';
 import { dataSourceOptions } from './database/data-source';
+import { LoggerModule } from './common/logger/logger.module';
 
+import { AdminModule } from './modules/admin/admin.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { CacheModule as AppCacheModule } from './modules/cache/cache.module';
+import { EmailModule } from './modules/email/email.module';
+import { FeatureFlagsModule } from './modules/feature-flags/feature-flags.module';
+import { HealthModule } from './modules/health/health.module';
+import { JobsModule } from './modules/jobs/jobs.module';
+import { ModerationModule } from './modules/moderation/moderation.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { PayoutsModule } from './modules/payouts/payouts.module';
+import { PostmortemModule } from './modules/postmortems/postmortem.module';
+import { QueryMonitoringModule } from './modules/query-monitoring/query-monitoring.module';
+import { QuestsModule } from './modules/quests/quests.module';
+import { QuotaModule } from './modules/quota/quota.module';
+import { StellarModule } from './modules/stellar/stellar.module';
+import { MultiSigModule } from './modules/stellar/multisig/multisig.module';
+import { SubmissionsModule } from './modules/submissions/submissions.module';
 import { ExecutionTraceModule } from './modules/trace/execution-trace.module';
+import { UsersModule } from './modules/users/users.module';
 import { WebhooksModule } from './modules/webhooks/webhooks.module';
+import { WebsocketModule } from './modules/websocket/websocket.module';
 import { TraceInterceptor } from './modules/trace/trace.interceptor';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -22,9 +42,30 @@ import { TraceInterceptor } from './modules/trace/trace.interceptor';
       envFilePath: '.env',
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
+    LoggerModule.forRoot(),
+    EventsModule,
+    AdminModule,
+    AnalyticsModule,
     AuthModule,
+    AppCacheModule,
+    EmailModule,
     ExecutionTraceModule,
+    FeatureFlagsModule,
+    HealthModule,
+    JobsModule,
+    ModerationModule,
+    MultiSigModule,
+    NotificationsModule,
+    PayoutsModule,
+    PostmortemModule,
+    QueryMonitoringModule,
+    QuestsModule,
+    QuotaModule,
+    StellarModule,
+    SubmissionsModule,
+    UsersModule,
     WebhooksModule,
+    WebsocketModule,
   ],
   controllers: [AppController],
   providers: [

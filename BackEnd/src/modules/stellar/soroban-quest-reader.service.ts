@@ -8,7 +8,7 @@ import {
   nativeToScVal,
   scValToNative,
   Networks,
-} from '@stellar/stellar-sdk';
+} from 'stellar-sdk';
 import { TracingService } from '../../common/tracing/tracing.service';
 import { MetricsService } from '../../common/services/metrics.service';
 

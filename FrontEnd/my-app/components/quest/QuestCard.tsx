@@ -7,7 +7,6 @@ import { QuestDifficulty } from '@/lib/types/quest';
 import { useFormatter } from '@/lib/hooks/useFormatter';
 import OptimizedImage from '@/components/ui/OptimizedImage';
 
-import { formatDeadlineLabel } from '@/lib/utils/date';
 
 
 interface QuestCardProps {
@@ -85,12 +84,6 @@ export const QuestCard = memo(
 
     // Urgency check is now locale-independent (raw ms comparison)
     const isUrgent = isDeadlineUrgent(quest.deadline);
-
-    const timeLabel = formatDeadlineLabel(quest.deadline ?? undefined);
-    const isUrgent =
-      timeLabel && !['Expired', 'Today'].includes(timeLabel)
-        ? parseInt(timeLabel) <= 3
-        : false;
 
 
     const handleClick = () => onClick?.(quest);

@@ -95,9 +95,9 @@ export const SubmissionsTable = memo(function SubmissionsTable({
                     type="button"
                     onClick={() => onSubmissionClick?.(submission)}
                     className="w-full text-left"
-                    aria-label={`View submission for ${submission.quest.title}`}
+                    aria-label={`View submission for ${submission.quest?.title ?? 'quest'}`}
                   >
-                    {submission.quest.title}
+                    {submission.quest?.title}
                   </button>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">
@@ -122,7 +122,7 @@ export const SubmissionsTable = memo(function SubmissionsTable({
                 </td>
                 <td
                   className={`whitespace-nowrap px-6 py-4 text-sm font-medium ${
-                    Number(submission.quest.rewardAmount) > 0
+                    Number(submission.quest?.rewardAmount) > 0
                       ? 'text-orange-600 dark:text-orange-400'
                       : 'text-zinc-500 dark:text-zinc-400'
                   }`}
@@ -133,8 +133,8 @@ export const SubmissionsTable = memo(function SubmissionsTable({
                     className="w-full text-left"
                     aria-label={`View reward for submission ${submission.id}`}
                   >
-                    {submission.quest.rewardAmount}{' '}
-                    {submission.quest.rewardAsset}
+                    {submission.quest?.rewardAmount}{' '}
+                    {submission.quest?.rewardAsset}
                   </button>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">

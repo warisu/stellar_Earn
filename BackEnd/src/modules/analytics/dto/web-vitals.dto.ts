@@ -79,7 +79,6 @@ export class WebVitalsDto {
   @IsOptional()
   @ApiPropertyOptional({
     description: 'Additional metric details and entries.',
-    type: 'object',
     example: {
       navigationType: 'reload',
       entries: [],

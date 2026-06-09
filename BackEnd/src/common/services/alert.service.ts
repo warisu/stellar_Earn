@@ -1,4 +1,4 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit, Optional } from '@nestjs/common';
 import { AppLoggerService } from '../logger/logger.service';
 import { MetricsService } from './metrics.service';
 import { DatabasePoolMonitorService } from '../../modules/health/services/database-pool-monitor.service';
@@ -38,7 +38,7 @@ export class AlertService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly logger: AppLoggerService,
     private readonly metrics: MetricsService,
-    private readonly poolMonitor?: DatabasePoolMonitorService,
+    @Optional() private readonly poolMonitor?: DatabasePoolMonitorService,
   ) {}
 
   onModuleInit(): void {

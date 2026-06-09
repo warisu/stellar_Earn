@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MultiSigWallet } from './entities/multisig-wallet.entity';
 import { MultiSigSigner } from './entities/multisig-signer.entity';
 import { MultiSigTransaction } from './entities/multisig-transaction.entity';
@@ -10,6 +11,7 @@ import { Payout } from '../../payouts/entities/payout.entity';
 
 @Module({
   imports: [
+    EventEmitterModule,
     TypeOrmModule.forFeature([
       MultiSigWallet,
       MultiSigSigner,
