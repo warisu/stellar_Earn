@@ -232,7 +232,7 @@ fn paid_submission_cannot_be_claimed_again() {
     ctx.client.approve_submission(&qid, &submitter, &verifier);
     ctx.client.claim_reward(&qid, &submitter, &500_i128);
 
-    let result = ctx.client.try_claim_reward(&qid, &submitter, &500_i128);
+    let result = ctx.client.try_claim_reward(, &100i128);
     assert!(result.is_err(), "claiming a paid submission must fail");
 }
 
@@ -242,7 +242,7 @@ fn pending_submission_cannot_be_claimed() {
     let (qid, _creator, _verifier) = register_quest(&ctx, symbol_short!("QP"));
     let submitter = submit(&ctx, &qid);
 
-    let result = ctx.client.try_claim_reward(&qid, &submitter, &500_i128);
+    let result = ctx.client.try_claim_reward(, &100i128);
     assert!(result.is_err(), "claiming a pending submission must fail");
 }
 

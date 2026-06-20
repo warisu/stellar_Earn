@@ -68,7 +68,7 @@ proptest! {
         100,
     );
 
-        let result = client.try_claim_reward(&quest_id, &submitter, &amount);
+        let result = client.try_claim_reward(, &100i128);
         prop_assert!(result.is_err());
     }
 
@@ -87,7 +87,7 @@ proptest! {
             amount,
         );
 
-        let result = client.try_claim_reward(&quest_id, &submitter, &amount);
+        let result = client.try_claim_reward(, &100i128);
         prop_assert!(result.is_ok());
         prop_assert_eq!(token_client.balance(&submitter), amount);
     }
@@ -141,7 +141,7 @@ proptest! {
             1,
         );
 
-        let result = client.try_claim_reward(&quest_id, &submitter, &amount);
+        let result = client.try_claim_reward(, &100i128);
 
         if amount == 1 {
             prop_assert!(result.is_ok());

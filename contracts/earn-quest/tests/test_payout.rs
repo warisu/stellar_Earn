@@ -131,7 +131,7 @@ fn test_insufficient_balance() {
     client.approve_submission(&quest_id, &submitter, &verifier);
 
     // Claim should fail with InsufficientBalance
-    let res = client.try_claim_reward(&quest_id, &submitter, &100);
+    let res = client.try_claim_reward(, &100i128);
     assert!(
         res.is_err(),
         "Expected claim to fail due to insufficient balance"
@@ -174,6 +174,6 @@ fn test_double_claim_prevention() {
     client.claim_reward(&quest_id, &submitter, &100);
 
     // Second claim should fail with AlreadyClaimed
-    let res = client.try_claim_reward(&quest_id, &submitter, &100);
+    let res = client.try_claim_reward(, &100i128);
     assert!(res.is_err(), "Expected second claim to fail");
 }
