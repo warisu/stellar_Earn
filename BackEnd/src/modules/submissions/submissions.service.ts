@@ -8,9 +8,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Submission } from './entities/submission.entity';
+import { Submission, SubmissionStatus } from './entities/submission.entity';
 import { ApproveSubmissionDto } from './dto/approve-submission.dto';
 import { RejectSubmissionDto } from './dto/reject-submission.dto';
+import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { StellarService } from '../stellar/stellar.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Quest } from '../quests/entities/quest.entity';
@@ -32,6 +33,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { QuestCompletedEvent } from '../../events/dto/quest-completed.event';
 import { SubmissionRejectedEvent } from '../../events/dto/submission-rejected.event';
 import { SubmissionApprovedEvent } from '../../events/dto/submission-approved.event';
+import { SubmissionCreatedEvent } from '../../events/dto/submission-created.event';
 
 @Injectable()
 export class SubmissionsService {
@@ -42,11 +44,90 @@ export class SubmissionsService {
     private submissionsRepository: Repository<Submission>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Quest)
+    private questsRepository: Repository<Quest>,
     private stellarService: StellarService,
     private notificationsService: NotificationsService,
     private eventEmitter: EventEmitter2,
     private metricsService: MetricsService,
   ) {}
+
+  /**
+   * Create a new submission for a quest.
+   *
+   * Validates the submitter's status BEFORE we write anything:
+   *   1. Authenticated user exists AND has a Stellar wallet linked.
+   *   2. The quest exists, is ACTIVE, and has not reached its max completions.
+   * Then INSERTs the row in PENDING and emits a `submission.created` event.
+   *
+   * @param questId  Quest the submission is for (UUID from path).
+   * @param dto      Validated proof payload. userId is NOT in this DTO; the
+   *                 controller injects it from the authenticated JWT.
+   * @param userId   Authenticated user id from `req.user.id`.
+   */
+  async createSubmission(
+    questId: string,
+    dto: CreateSubmissionDto,
+    userId: string,
+  ): Promise<Submission> {
+    // Submitter gate: must have a Stellar wallet linked so a later on-chain
+    // approve flow has the public key it needs.
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      withDeleted: false,
+    });
+    if (!user) {
+      throw new ForbiddenException('Authenticated user not found');
+    }
+    if (!user.stellarAddress) {
+      throw new BadRequestException(
+        'You must link a Stellar wallet before submitting proof',
+      );
+    }
+
+    // Quest gate: must exist, be ACTIVE, and have remaining capacity.
+    const quest = await this.questsRepository.findOne({
+      where: { id: questId },
+      withDeleted: false,
+    });
+    if (!quest) {
+      throw new NotFoundException(`Quest with ID ${questId} not found`);
+    }
+    if (quest.status !== 'ACTIVE') {
+      throw new BadRequestException(
+        `Quest is not accepting submissions (current status: ${quest.status})`,
+      );
+    }
+    if (
+      typeof quest.maxCompletions === 'number' &&
+      quest.currentCompletions >= quest.maxCompletions
+    ) {
+      throw new BadRequestException(
+        'Quest has reached its maximum completions',
+      );
+    }
+
+    const submission = this.submissionsRepository.create({
+      questId,
+      userId,
+      proof: { fileName: dto.fileName, fileContent: dto.fileContent },
+      status: SubmissionStatus.PENDING,
+      verifierNotes: dto.notes ?? null,
+    });
+    const saved = await this.submissionsRepository.save(submission);
+
+    this.eventEmitter.emit(
+      'submission.created',
+      new SubmissionCreatedEvent(saved.id, questId, userId),
+    );
+    this.metricsService.incrementCounter('submission_create_total');
+
+    this.logger.log(
+      `Submission ${saved.id} created for quest=${questId} by user=${userId}`,
+    );
+
+    return saved;
+  }
 
   /**
    * Approve a submission and trigger on-chain reward distribution
