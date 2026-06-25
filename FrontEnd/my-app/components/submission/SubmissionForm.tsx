@@ -71,8 +71,8 @@ function CommitRevealInfo() {
             </li>
           </ol>
           <p className="mt-2 text-blue-600 dark:text-blue-300">
-            File uploads are pinned to IPFS for permanent, decentralised
-            storage before being committed on-chain.
+            File uploads are pinned to IPFS for permanent, decentralised storage
+            before being committed on-chain.
           </p>
         </div>
       )}
@@ -215,8 +215,7 @@ export function SubmissionForm({
 
   // ── Submitting ─────────────────────────────────────────────────────────────
   if (currentStep === 'submitting') {
-    const uploadingFile =
-      formData.proofType === 'file' && submitProgress < 80;
+    const uploadingFile = formData.proofType === 'file' && submitProgress < 80;
     return (
       <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
         <div className="mb-4 flex items-center gap-3">
@@ -457,9 +456,7 @@ export function SubmissionForm({
           <dt className="font-medium text-zinc-600 dark:text-zinc-400">
             Proof type
           </dt>
-          <dd className="text-zinc-900 dark:text-zinc-100">
-            {proofTypeLabel}
-          </dd>
+          <dd className="text-zinc-900 dark:text-zinc-100">{proofTypeLabel}</dd>
         </div>
         <div className="flex justify-between gap-4 py-3 text-sm">
           <dt className="font-medium text-zinc-600 dark:text-zinc-400">

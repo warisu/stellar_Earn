@@ -205,8 +205,7 @@ export default function QuestDetailPage() {
             questTitle={quest.title}
             isExpired={
               quest.status === 'Expired' ||
-              (quest.deadline != null &&
-                new Date(quest.deadline) < new Date())
+              (quest.deadline != null && new Date(quest.deadline) < new Date())
             }
             isFull={
               quest.maxParticipants != null &&
