@@ -3,8 +3,6 @@
 //! Defines explicit instruction-count ceilings for each public entrypoint
 //! so that regressions are caught before they reach production.
 
-#![no_std]
-
 use soroban_sdk::{contracttype, symbol_short, Symbol};
 
 /// Maximum allowed instructions per named entrypoint.

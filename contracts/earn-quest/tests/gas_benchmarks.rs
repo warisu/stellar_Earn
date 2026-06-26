@@ -20,7 +20,7 @@ use earn_quest::{gas_budget, EarnQuestContract, EarnQuestContractClient};
 use soroban_sdk::{
     symbol_short,
     testutils::{Address as _, Ledger},
-    token::{StellarAssetClient, TokenClient},
+    token::StellarAssetClient,
     Address, BytesN, Env, Symbol,
 };
 
