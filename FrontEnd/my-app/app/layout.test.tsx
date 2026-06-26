@@ -1,10 +1,19 @@
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
+
+// Mock next/font/google which is incompatible with jsdom
+vi.mock('next/font/google', () => ({
+  Geist: () => ({ variable: '--font-geist-sans', className: 'geist-sans' }),
+  Geist_Mono: () => ({
+    variable: '--font-geist-mono',
+    className: 'geist-mono',
+  }),
+}));
+
 import RootLayout from './layout';
 
-describe('RootLayout', () => {
-  it('renders children correctly and hydrates without throwing errors', () => {
-    // Testing the global boundary by simply rendering the root.
-    // suppressHydrationWarning is present on HTML.
+describe('RootLayout smoke test', () => {
+  it('renders children without throwing — verifies global error boundary hydration', () => {
     expect(() => {
       render(
         <RootLayout>

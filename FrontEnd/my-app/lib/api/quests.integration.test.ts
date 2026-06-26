@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { getQuests, getQuestById } from './quests';
 import { cacheManager } from '@/lib/utils/cache';
@@ -27,21 +27,12 @@ function questListResponse(version: number) {
   };
 }
 
-beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'error' });
-});
-
 beforeEach(() => {
   cacheManager.clear();
 });
 
 afterEach(() => {
-  server.resetHandlers();
   vi.restoreAllMocks();
-});
-
-afterAll(() => {
-  server.close();
 });
 
 describe('Quests API Integration Tests', () => {
