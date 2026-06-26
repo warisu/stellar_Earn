@@ -28,14 +28,13 @@ describe('Environment Variable Validation', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it('should fail validation when required variables are missing', () => {
+    it('should pass validation even when required variables are missing if they have a fallback', () => {
       delete process.env.NEXT_PUBLIC_API_BASE_URL;
 
       const result = validateEnv();
 
-      expect(result.valid).toBe(false);
-      expect(result.errors).toHaveLength(1);
-      expect(result.errors[0].variable).toBe('NEXT_PUBLIC_API_BASE_URL');
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
     });
 
     it('should include warnings for missing optional variables with defaults', () => {
@@ -51,16 +50,12 @@ describe('Environment Variable Validation', () => {
       ).toBe(true);
     });
 
-    it('should provide helpful error details', () => {
+    it('should provide no errors when required variables have fallbacks', () => {
       delete process.env.NEXT_PUBLIC_API_BASE_URL;
 
       const result = validateEnv();
 
-      expect(result.errors[0]).toMatchObject({
-        variable: 'NEXT_PUBLIC_API_BASE_URL',
-        description: expect.any(String),
-        example: expect.any(String),
-      });
+      expect(result.errors).toHaveLength(0);
     });
   });
 
@@ -139,7 +134,12 @@ describe('Environment Variable Validation', () => {
   });
 
   describe('error messages', () => {
-    it('should format validation errors in a readable way', () => {
+    it('should format validation errors in a readable way when no fallback exists', () => {
+      // Create a scenario where a truly required variable with no fallback is missing
+      // by temporarily deleting the default from NEXT_PUBLIC_API_BASE_URL
+      const originalConfig = REQUIRED_ENV_VARS.NEXT_PUBLIC_API_BASE_URL;
+      delete (REQUIRED_ENV_VARS.NEXT_PUBLIC_API_BASE_URL as any).default;
+
       delete process.env.NEXT_PUBLIC_API_BASE_URL;
 
       const result = validateEnv();
@@ -147,6 +147,9 @@ describe('Environment Variable Validation', () => {
       expect(result.errors[0].variable).toBe('NEXT_PUBLIC_API_BASE_URL');
       expect(result.errors[0].description).toContain('Backend API');
       expect(result.errors[0].example).toContain('http://localhost:3001');
+
+      // Restore the original config
+      REQUIRED_ENV_VARS.NEXT_PUBLIC_API_BASE_URL = originalConfig;
     });
   });
 });

@@ -242,7 +242,7 @@ export function getRequiredEnv(name: keyof typeof REQUIRED_ENV_VARS): string {
   const value = readEnvValue(name);
   if (value) return value;
 
-  // If there's a default value, use it
+  // If there's a default value, use it as fallback
   const config = REQUIRED_ENV_VARS[name];
   if (config.default) return config.default;
 
