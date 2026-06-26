@@ -8,8 +8,10 @@
 
 process.env.NEXT_PUBLIC_API_BASE_URL ||= 'http://localhost:3000';
 process.env.NEXT_PUBLIC_STELLAR_NETWORK ||= 'testnet';
-process.env.NEXT_PUBLIC_SOROBAN_RPC_URL ||= 'https://soroban-testnet.stellar.org';
-process.env.NEXT_PUBLIC_CONTRACT_ID ||= 'CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+process.env.NEXT_PUBLIC_SOROBAN_RPC_URL ||=
+  'https://soroban-testnet.stellar.org';
+process.env.NEXT_PUBLIC_CONTRACT_ID ||=
+  'CXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 process.env.NEXT_PUBLIC_ANALYTICS_TEST_MODE ||= 'true';
 process.env.NEXT_PUBLIC_ANALYTICS_ID ||= 'G-TEST-XXXXXXXXXX';
 process.env.NEXT_PUBLIC_SENTRY_DSN ||= '';
