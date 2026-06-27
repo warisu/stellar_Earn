@@ -161,12 +161,9 @@
     "testEnvironment": "node",
     "moduleNameMapper": {
       "^#src/(.*)$": "<rootDir>/src/$1",
-      "^src/(.*)$": "<rootDir>/src/$1"
-    },
-    "testTimeout": 30000,
-    "setupFilesAfterEnv": [
-      "<rootDir>/test/setup-unit-afterenv.ts"
-    ]
+      "^src/(.*)$": "<rootDir>/src/$1",
+      "^test/(.*)$": "<rootDir>/test/$1"
+    }
   },
   "overrides": {
     "cookie": "0.7.2"
