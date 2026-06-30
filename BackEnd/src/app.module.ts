@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -36,6 +36,8 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { WebsocketModule } from './modules/websocket/websocket.module';
 import { TraceInterceptor } from './modules/trace/trace.interceptor';
 import { EventsModule } from './events/events.module';
+import { ApiVersionGuard } from './common/guards/versioning.guard';
+import { VersioningInterceptor } from './common/interceptors/versioning.interceptor';
 
 @Module({
   imports: [
@@ -76,6 +78,16 @@ import { EventsModule } from './events/events.module';
     AppLoggerService,
     SecurityMiddleware,
     StartupReadinessService,
+    {
+      provide: APP_GUARD,
+      useClass: ApiVersionGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useFactory: (reflector: Reflector) =>
+        new VersioningInterceptor(reflector),
+      inject: [Reflector],
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: TraceInterceptor,
