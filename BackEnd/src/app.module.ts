@@ -10,6 +10,7 @@ import { SecurityMiddleware } from './common/middleware/security.middleware';
 import { dataSourceOptions } from './database/data-source';
 import { LoggerModule } from './common/logger/logger.module';
 import { StartupReadinessService } from './common/services/startup-readiness.service';
+import { FileUploadModule } from './common/upload/file-upload.module';
 
 import { AdminModule } from './modules/admin/admin.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
@@ -44,6 +45,7 @@ import { EventsModule } from './events/events.module';
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     LoggerModule.forRoot(),
+    FileUploadModule,
     EventsModule,
     AdminModule,
     AnalyticsModule,
