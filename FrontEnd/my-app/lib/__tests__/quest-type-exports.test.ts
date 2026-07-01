@@ -30,6 +30,8 @@ describe('QuestDifficulty and QuestStatus runtime object exports', () => {
   });
 
   it('QuestDifficulty values are strings', () => {
-    Object.values(QuestDifficulty).forEach((v) => expect(typeof v).toBe('string'));
+    Object.values(QuestDifficulty).forEach((v) =>
+      expect(typeof v).toBe('string')
+    );
   });
 });
