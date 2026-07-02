@@ -23,12 +23,17 @@ export class ConfigBoundaryGuard extends Component<Props, State> {
     if (error instanceof ConfigurationBoundaryError) {
       return { hasError: true, errorMessage: error.message };
     }
-    // Pass non-configuration exceptions to the global Next.js error handler
     throw error;
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Configuration Boundary Intercepted:", error, errorInfo);
+    // Task Requirement: Strip verbose console logging from environmental contexts in production
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("Configuration Boundary Intercepted:", error, errorInfo);
+    } else {
+      // Send trace diagnostics to your telemetry endpoint securely instead of dumping to standard browser out
+      // myTelemetryClient.captureException(error);
+    }
   }
 
   public render() {
@@ -41,7 +46,6 @@ export class ConfigBoundaryGuard extends Component<Props, State> {
       );
     }
 
-    // Fixed: Properly accessing children via this.props
     return this.props.children;
   }
 }
