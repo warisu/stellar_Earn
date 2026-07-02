@@ -15,6 +15,7 @@
     "test:integration": "vitest run --include '**/*.integration.test.ts'",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:env-parity": "node scripts/validate-env-parity.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "changelog:check": "node scripts/check-changelog.mjs",
